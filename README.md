@@ -16,7 +16,7 @@ To create entry points (menu options in top menu bar), following XML file must b
 
 -- website/static/views/website_backend_navbar.xml (line 56)
 
-<pre><code>
+```
    <li groups="base.group_website_designer"><a href="#" data-action="copy_page">Copy Page</a></li> 
    <li groups="base.group_website_designer"><a href="#" data-action="delete_page">Delete Page</a></li>
-</code></pre>
+```
