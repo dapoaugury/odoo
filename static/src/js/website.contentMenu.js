@@ -59,12 +59,11 @@
             });
         },
 
-		// Wang - 20150319
-		// Copy current page to another new page and create corresponding new entry in menu bar.
-		// Current page to be copied will appear in the prompt for reference.
+	// Copy current page to another new page and create corresponding new menu entry in menu bar.
+	// URL of current page to be copied will appear in the prompt for reference.
+	// Value of current page is derived from current URL by stripping away all preceeding path components.
 
-		copy_page: function() {
-
+	copy_page: function() {
             website.prompt({
                 id: "editor_copy_page",
                 window_title: _t("Copy Current Page: " + window.location.href),
