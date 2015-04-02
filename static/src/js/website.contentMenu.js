@@ -59,12 +59,11 @@
             });
         },
 
-		// Wang - 20150319
-		// Copy current page to another new page and create corresponding new entry in menu bar.
-		// Current page to be copied will appear in the prompt for reference.
+	// Copy current page to another new page and create corresponding new menu entry in menu bar.
+	// URL of current page to be copied will appear in the prompt for reference.
+	// Value of current page is derived from current URL by stripping away all preceeding path components.
 
-		copy_page: function() {
-
+	copy_page: function() {
             website.prompt({
                 id: "editor_copy_page",
                 window_title: _t("Copy Current Page: " + window.location.href),
@@ -78,17 +77,16 @@
 			}); 
         },
 
-		// Wang - 20150326
-		// Delete current page and associated menu entry from database.
-		// User is allowed to modified URL of current page to be deleted manually in the prompt.
+	// Delete current page and associated menu entry from database.
+	// User is allowed to modified URL of current page to be deleted manually in the prompt.
+	// Value passed on to Python function is derived from default/current URL by stripping away unwanted components.
 
-		delete_page: function() {
-
+	delete_page: function() {
             website.prompt({
                 id: "editor_delete_page",
                 window_title: _t("Delete Current Page"),
                 input: _t("URL"),
-				default: window.location.href,
+		default: window.location.href,
 			}).then(function(val) { 
 				if (val) {
 					var val = val.replace(/^.*\//,'');
