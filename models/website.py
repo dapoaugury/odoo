@@ -224,11 +224,11 @@ class website(osv.osv):
             }, context=context)
         return page_xmlid
 
-    # Wang - 20150319
-
+    # This new function is created with reference to existing function new_page except default_page has been changed to current_page selected by user.
+    # The try statement seems reducdant but it is there to ensure that the page to be copied does exist in database.
+    
     def copy_page(self, cr, uid, name, current_page, ispage=True, context=None):
 
-        # Wang - 20150320
         # Form fully qualified template name by concatenating module name with template name for current page to be copied.
         template = "website.%s" % (current_page)
 
@@ -250,7 +250,11 @@ class website(osv.osv):
             page_id = view.copy(cr, uid, template_id, context=context)
             page = view.browse(cr, uid, page_id, context=context)
  
-            # Wang - 20150401 Create records in database for the copied page with slugified page name.
+            # Create records in database for the copied page with slugified page name thus menu name entered by user
+            # is case insensitive and all special/space characters are converted to dash characters.
+            # Pages with duplicated menu names entered by user will still be created in database except they all point
+            # to the same URL address and will be deleted together when any of pages with duplicated menu names is deleted.
+            
             page.write({
                 'arch': page.arch.replace(template, page_xmlid),
                 'name': page_name,
@@ -267,7 +271,9 @@ class website(osv.osv):
 
         return page_xmlid
 
-    # Wang - 20150326
+    # This new function is created to remove data and menu records from database for current page selected by user.
+    # Since the page name is derived from URL in delete_page function in Javascript file website.contentMenu.js,
+    # it is the slugified but not the original version.
 
     def delete_page(self, cr, uid, name, ispage=True, context=None):
 
@@ -285,6 +291,7 @@ class website(osv.osv):
         # Retrieval of template ID from database based on slugified page name (refer to above copy_page function).
         _, template_id = imd.get_object_reference(cr, uid, template_module, page_name)
 
+        # Attempt to remove template from ir.ui.view model through templated ID found previously.
         try:
             view.unlink(cr, uid, template_id, context=context)
         except ValueError:
