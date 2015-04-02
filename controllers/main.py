@@ -177,7 +177,8 @@ class Website(openerp.addons.web.controllers.main.Home):
             return werkzeug.wrappers.Response(url, mimetype='text/plain')
         return werkzeug.utils.redirect(url)
 
-    # Wang - 20150319
+    # The function copy_page in webiste/models/website.py Python file is called to insert record into model ir.ui.view
+    # XML ID of the page (comprise of <module name>.<slugified page name>) is return value from the function.
 
     @http.route('/website/copy/<path:path>', type='http', auth="user", website=True)
     def pagecopy(self, path, noredirect=False, current_page=None):
@@ -185,6 +186,9 @@ class Website(openerp.addons.web.controllers.main.Home):
 
         model, id  = request.registry["ir.model.data"].get_object_reference(request.cr, request.uid, 'website', 'main_menu')
 
+        # New menu entry for the copied page is created under parent menu ID in the database.
+        # Take note that path variable contains original name as entered by user in prompt.
+        
         request.registry['website.menu'].create(request.cr, request.uid, {
                 'name': path,
                 'url': "/page/" + xml_id,
@@ -194,19 +198,24 @@ class Website(openerp.addons.web.controllers.main.Home):
         # Reverse action in order to allow shortcut for /page/<website_xml_id>
         url = "/page/" + re.sub(r"^website\.", '', xml_id)
 
-        # Wang - Whether to redirect website to newly created page or just print result in plain text in current page.
+        # Whether to redirect website to newly created page or just print result in plain text in current page.
+        # Basically user is redirected to newly copied page.
+        
         if noredirect:
             return werkzeug.wrappers.Response(url, mimetype='text/plain')
         return werkzeug.utils.redirect(url)
 
-    # Wang - 20150326
+    # The function delete_page in webiste/models/website.py Python file is called to remove record from model ir.ui.view
+    # Again return value from the function is XML ID (comprise of <module name>.<slugified page name>) of current page to
+    # be deleted. Take note that to search for menu ID of menu entry belong to deleted page, url instead of path must
+    # be used as the path name has been slugified but not the same as original path name as in above pagecopy function.
 
     @http.route('/website/delete/<path:path>', type='http', auth="user", website=True)
     def pagedelete(self, path, noredirect=False):
         xml_id = request.registry['website'].delete_page(request.cr, request.uid, path, context=request.context)
         url = "/page/%s" % (xml_id)
 
-        # Wang - 20150401 Query database with url of page to be deleted as search index in SQL statement.
+        # Query database with url of page to be deleted as search index in SQL statement.
         id = request.registry["website.menu"].search(request.cr, request.uid, [("url","=",url)], context=request.context)
 
         # Remove submenu option from menu bar in user interface with index obtained from database.
