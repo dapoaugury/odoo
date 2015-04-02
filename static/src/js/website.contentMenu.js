@@ -77,9 +77,9 @@
 			}); 
         },
 
+	// Wang - 20150326
 	// Delete current page and associated menu entry from database.
 	// User is allowed to modified URL of current page to be deleted manually in the prompt.
-	// Value passed on to Python function is derived from default/current URL by stripping away unwanted components.
 
 	delete_page: function() {
             website.prompt({
